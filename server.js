@@ -9,7 +9,10 @@ dotenv.config();
 const app = express();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-app.use(cors({ origin: "http://localhost:5174" }));
+// app.use(cors({ origin: "http://localhost:5174" }));
+app.use(cors({
+  origin: process.env.CLIENT_URL || "http://localhost:5174",
+}))
 app.use(express.json());
 
 // Route: Create Checkout Session
@@ -33,8 +36,8 @@ app.post("/create-checkout-session", async (req, res) => {
       payment_method_types: ["card"],
       mode: "payment",
       line_items,
-      success_url: "http://localhost:5174/success",
-      cancel_url: "http://localhost:5174/",
+       success_url: `${process.env.CLIENT_URL}/success`,
+      cancel_url: `${process.env.CLIENT_URL}/`,
     });
 
     res.json({ url: session.url });
